@@ -4,7 +4,12 @@ plugins {
     id("org.springframework.boot") version "3.3.2"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "1.9.24"
+
+    `maven-publish`
+    `java-library`
 }
+
+
 
 group = "com.kumaverse"
 version = "0.0.1-SNAPSHOT"
@@ -27,7 +32,10 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     runtimeOnly("org.postgresql:postgresql")
+
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
