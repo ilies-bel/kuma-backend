@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mongo:7.0.12
+    restart: unless-stopped
+    networks:
+      - db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - db-data:/etc/mongo
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    networks:
+      - db
+    environment:
+      POSTGRES_USER: kuma_admin
+      POSTGRES_PASSWORD: Password1234
+      POSTGRES_DB: kuma
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  api:
+    build: ..
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    networks:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:Password1234@kuma:27017
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  db:
+volumes:
+  db-data:

@@ -1,1 +1,16 @@
-spring.application.name=kuma-backend
+server:
+  port: 3001
+spring:
+  application:
+    name: kuma-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/kuma
+    password: Password1234
+    username: ${DB_USERNAME:kuma_admin}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    validate-migration-naming: true
