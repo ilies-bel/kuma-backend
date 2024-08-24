@@ -1,11 +1,9 @@
-package com.kumaverse.kumabackend.services
+package com.kumaverse.kumabackend.user
 
 import com.kumaverse.kumabackend.administration.Role
-import com.kumaverse.kumabackend.dao.UserDao
-import com.kumaverse.kumabackend.dao.UserEntity
+import com.kumaverse.kumabackend.bookmark.BookmarkDao
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
 
@@ -34,14 +32,6 @@ class UserService(private val userDao: UserDao, private val bookmarkDao: Bookmar
 
     fun save(userToCreate: UserToCreate): UserId {
         return UserId(userDao.save(UserEntity.fromUserToCreate(userToCreate)).id)
-    }
-}
-
-
-@Repository
-class BookmarkDao {
-    fun bookMarkTerm(id: Long, termId: Long): UserEntity {
-        TODO()
     }
 }
 

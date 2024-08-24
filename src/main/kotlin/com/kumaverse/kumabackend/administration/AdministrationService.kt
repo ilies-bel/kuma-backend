@@ -1,7 +1,7 @@
 package com.kumaverse.kumabackend.administration
 
-import com.kumaverse.kumabackend.dao.UserDao
-import com.kumaverse.kumabackend.services.UserId
+import com.kumaverse.kumabackend.user.UserDao
+import com.kumaverse.kumabackend.user.UserId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

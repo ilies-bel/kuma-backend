@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.services
+package com.kumaverse.kumabackend.theme
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

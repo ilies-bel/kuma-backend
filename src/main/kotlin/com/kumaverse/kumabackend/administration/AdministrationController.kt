@@ -1,7 +1,7 @@
 package com.kumaverse.kumabackend.administration
 
-import com.kumaverse.kumabackend.services.UserId
-import com.kumaverse.kumabackend.services.UserService
+import com.kumaverse.kumabackend.user.UserId
+import com.kumaverse.kumabackend.user.UserService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable

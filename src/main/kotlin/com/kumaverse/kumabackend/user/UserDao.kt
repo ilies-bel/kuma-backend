@@ -1,8 +1,7 @@
-package com.kumaverse.kumabackend.dao
+package com.kumaverse.kumabackend.user
 
 import com.kumaverse.kumabackend.administration.AccountStatus
 import com.kumaverse.kumabackend.administration.Role
-import com.kumaverse.kumabackend.services.UserToCreate
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated

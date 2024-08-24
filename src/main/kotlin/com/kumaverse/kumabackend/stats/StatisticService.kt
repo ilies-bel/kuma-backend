@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.services
+package com.kumaverse.kumabackend.stats
 
 class StatisticService {
     fun countUserBase(): UserBaseStats {
