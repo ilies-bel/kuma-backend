@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.services
+package com.kumaverse.kumabackend.category
 
 import org.springframework.stereotype.Service
 

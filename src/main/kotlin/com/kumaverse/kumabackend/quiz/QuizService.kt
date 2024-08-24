@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.services
+package com.kumaverse.kumabackend.quiz
 
 class QuizService {
     fun generateQuiz(id: String) {

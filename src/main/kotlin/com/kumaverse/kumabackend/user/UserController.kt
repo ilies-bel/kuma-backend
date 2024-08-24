@@ -1,10 +1,5 @@
-package com.kumaverse.kumabackend.controllers
+package com.kumaverse.kumabackend.user
 
-import com.kumaverse.kumabackend.administration.AdministrationService
-import com.kumaverse.kumabackend.dao.UserEntity
-import com.kumaverse.kumabackend.services.UserId
-import com.kumaverse.kumabackend.services.UserService
-import com.kumaverse.kumabackend.services.UserToCreate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -16,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-class UserController(private val userService: UserService, private val administrationService: AdministrationService) {
+class UserController(private val userService: UserService) {
 
     @PostMapping("/users")
     fun saveUser(userToCreate: UserToCreate): UserId {

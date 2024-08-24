@@ -1,6 +1,8 @@
 package com.kumaverse.kumabackend.language
 
-import com.kumaverse.kumabackend.services.ApprovalStatus
+import com.kumaverse.kumabackend.language.persistence.LanguageDao
+import com.kumaverse.kumabackend.language.persistence.LanguageEntity
+import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*

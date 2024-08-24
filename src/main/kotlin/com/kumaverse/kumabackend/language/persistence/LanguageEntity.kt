@@ -1,6 +1,6 @@
-package com.kumaverse.kumabackend.language
+package com.kumaverse.kumabackend.language.persistence
 
-import com.kumaverse.kumabackend.services.ApprovalStatus
+import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
