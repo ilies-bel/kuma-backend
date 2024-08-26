@@ -1,6 +1,7 @@
 package com.kumaverse.kumabackend.terms
 
 
+import com.kumaverse.kumabackend.user.People
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -45,7 +46,8 @@ class TermService(private val termDao: TermDao) {
                 id = it.id!!,
                 term = it.name,
                 definition = it.defintion,
-                votes = it.upvotes
+                votes = it.upvotes,
+                author = People(it.author.id, it.author.username)
             )
         }
     }
@@ -71,6 +73,6 @@ data class Term(
     val term: String,
     val definition: String,
     val votes: Int,
+    val author: People,
 )
-
 

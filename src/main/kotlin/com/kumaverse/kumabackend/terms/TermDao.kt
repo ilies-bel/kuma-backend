@@ -1,6 +1,7 @@
 package com.kumaverse.kumabackend.terms
 
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
+import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -26,4 +27,7 @@ class TermEntity(
     var language: LanguageEntity,
 
     var upvotes: Int,
+
+    @ManyToOne
+    var author: UserEntity,
 )
