@@ -13,6 +13,32 @@ class TermService(private val termDao: TermDao) {
     }
 
 
+    fun patchTerm(patchTermRequest: PatchTermRequest) {
+        patchTermRequest.term?.let {
+            // update term
+        }
+
+        patchTermRequest.definition?.let {
+            // update definition
+        }
+
+
+        patchTermRequest.grammaticalCategory?.let {
+            // update grammatical category
+        }
+
+
+        patchTermRequest.theme?.let {
+            // update theme
+        }
+
+
+        patchTermRequest.upvote?.let {
+            // update upvote
+        }
+    }
+
+
     fun findTerms(pageable: Pageable): Page<Term> {
         return termDao.findAll(pageable).map {
             Term(
@@ -29,6 +55,15 @@ class TermService(private val termDao: TermDao) {
     }
 
 }
+
+data class PatchTermRequest(
+    val term: String?,
+    val definition: String?,
+    val grammaticalCategory: String?,
+    val theme: String?,
+    val upvote: Boolean?,
+    val bookmark: Boolean?,
+)
 
 
 data class Term(
