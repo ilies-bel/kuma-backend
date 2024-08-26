@@ -15,14 +15,16 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 interface UserDao : JpaRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity>
 
 @Entity
-@Table(name = "user")
+@Table(name = "people")
 class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Enumerated(EnumType.STRING)
     var accountStatus: AccountStatus,
+
+    var username: String,
 
     @Enumerated(EnumType.STRING)
     var role: Role,
@@ -33,7 +35,8 @@ class UserEntity(
             return UserEntity(
                 id = 0,
                 accountStatus = AccountStatus.ACTIVE,
-                role = Role.USER
+                role = Role.USER,
+                username = userToCreate.username
             )
         }
     }

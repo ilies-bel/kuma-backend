@@ -35,10 +35,9 @@ class UserService(private val userDao: UserDao, private val bookmarkDao: Bookmar
     }
 }
 
-
-data class UserToCreate(
+data class People(
+    val id: Long,
     val username: String,
-    val email: String,
 )
 
 data class User(
@@ -46,6 +45,13 @@ data class User(
     val isBanned: Boolean,
     val role: Role,
 )
+
+
+data class UserToCreate(
+    val username: String,
+    val email: String,
+)
+
 
 @JvmInline
 value class UserId(val value: Long)
