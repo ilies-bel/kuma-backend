@@ -11,3 +11,6 @@ alter table term
 
 alter table term
     add column if not exists upvotes integer not null default 0;
+
+
+create sequence if not exists grammatical_category_seq start with 1 increment by 50;
