@@ -10,7 +10,8 @@ import java.util.*
 
 @Service
 class LanguageService(private val languageDao: LanguageDao) {
-    fun findApproved() {
+
+    fun findApproved(): List<LanguageEntity> {
         val approvedLanguages = Specification.where<LanguageEntity> { root, _, cb ->
             cb.equal(
                 root.get<LanguageEntity>(LanguageEntity::approvalStatus.name),
@@ -18,7 +19,7 @@ class LanguageService(private val languageDao: LanguageDao) {
             )
         }
 
-        languageDao.findAll(approvedLanguages)
+        return languageDao.findAll(approvedLanguages)
     }
 
     fun findById(id: Long): Optional<LanguageEntity> {

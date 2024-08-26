@@ -7,6 +7,7 @@ build/
 
 .env
 
+.gradle/*
 
 ### STS ###
 .apt_generated
@@ -41,3 +42,4 @@ out/
 
 ### Kotlin ###
 .kotlin
+/build/
