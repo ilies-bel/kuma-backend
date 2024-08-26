@@ -4,3 +4,6 @@ alter table "user"
 create sequence if not exists tag_seq start with 1 increment by 50;
 
 create sequence if not exists term_seq start with 1 increment by 50;
+
+alter table term
+    alter column language_id type bigint;

@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class BookmarkDao {
-    fun bookMarkTerm(id: Long, termId: Long): UserEntity {
+
+    fun save(id: Long, termId: Long): UserEntity {
         TODO()
     }
 }

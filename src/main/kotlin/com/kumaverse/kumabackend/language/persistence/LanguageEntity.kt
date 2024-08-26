@@ -16,6 +16,7 @@ class LanguageEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
+    var name: String,
 
     @Enumerated(EnumType.STRING)
     var approvalStatus: ApprovalStatus,
