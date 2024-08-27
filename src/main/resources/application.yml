@@ -14,3 +14,7 @@ spring:
       ddl-auto: validate
   flyway:
     validate-migration-naming: true
+security:
+  jwt:
+    expiration-time: 86400000
+    secret-key: ${JWT_SECRET:secret}

@@ -6,17 +6,12 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
 class UserController(private val userService: UserService) {
 
-    @PostMapping("/users")
-    fun saveUser(userToCreate: UserToCreate): UserId {
-        return userService.save(userToCreate)
-    }
 
     @GetMapping("/users")
     fun getUsers(@PageableDefault pageableDefault: Pageable): Page<UserEntity> {
