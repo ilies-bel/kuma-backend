@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class TermController(private val termService: TermService) {
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path = ["/api/terms", "/v2/terms"])
+    @GetMapping("/v2/public/terms")
     fun getTerms(
         pageable: Pageable,
         @RequestParam tag: String?,

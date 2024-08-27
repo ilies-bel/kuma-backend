@@ -1,6 +1,6 @@
 package com.kumaverse.kumabackend.configuration
 
-import com.kumaverse.kumabackend.authentication.JwtAuthenticationFilter
+import com.kumaverse.kumabackend.authentication.configuration.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -31,7 +31,7 @@ class SecurityConfiguration(
             csrf { disable() }
             authorizeRequests {
                 authorize("/v2/auth/**", permitAll)
-                authorize("/**", permitAll)
+                authorize("/v2/public/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }

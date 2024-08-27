@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class CategoryController(private val categoryService: CategoryService) {
 
-    @GetMapping("/v2/categories")
+    @GetMapping("/v2/public/categories")
     fun findCategory(): List<CategoryEntity> {
         return categoryService.findApproved()
     }
