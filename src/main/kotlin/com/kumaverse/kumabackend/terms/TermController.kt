@@ -13,7 +13,7 @@ class TermController(private val termService: TermService) {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = ["/api/terms", "/v2/terms"])
-    fun getTerms(pageable: Pageable): Page<Term> {
+    fun getTerms(pageable: Pageable): Page<TermForUser> {
         return termService.findTerms(pageable)
     }
 }

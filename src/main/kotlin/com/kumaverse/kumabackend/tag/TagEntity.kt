@@ -18,6 +18,8 @@ class TagEntity(
     @Column(name = "id", nullable = false)
     val id: Long = 0,
 
+    var name: String,
+
     @Enumerated(EnumType.STRING)
     var approvalStatus: ApprovalStatus,
 )
