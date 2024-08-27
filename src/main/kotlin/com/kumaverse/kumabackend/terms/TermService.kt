@@ -41,10 +41,12 @@ class TermService(private val termDao: TermDao) {
     }
 
 
-    fun findTerms(pageable: Pageable): Page<TermForUser> {
+    fun findTerms(pageable: Pageable, termSearchRequest: TermSearchRequest): Page<TermForUser> {
         // get users data from user service
 
-        return termDao.findAll(pageable).map {
+        val specification = termSearchRequest.toSpecification()
+
+        return termDao.findAll(specification, pageable).map {
             TermForUser(
                 term = Term(
                     id = it.id!!,
