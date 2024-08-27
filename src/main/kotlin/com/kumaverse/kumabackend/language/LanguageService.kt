@@ -41,6 +41,7 @@ class LanguageService(private val languageDao: LanguageDao) {
 }
 
 data class Language(
-    var id: Long? = null,
-    var approvalStatus: ApprovalStatus? = null,
+    val id: Long,
+    val name: String,
+    val code: String,
 )
