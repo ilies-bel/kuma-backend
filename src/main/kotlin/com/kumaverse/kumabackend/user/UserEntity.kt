@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails
 @Table(name = "people")
 class UserEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long,
 
     @Enumerated(EnumType.STRING)
@@ -50,4 +50,5 @@ class UserEntity(
     override fun isAccountNonLocked(): Boolean {
         return accountStatus == AccountStatus.ACTIVE
     }
+
 }

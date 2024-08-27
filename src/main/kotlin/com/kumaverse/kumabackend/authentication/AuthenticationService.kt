@@ -21,7 +21,7 @@ class AuthenticationService(
     fun signup(input: UserToCreate): UserId {
         return userRepository.save(
             UserEntity(
-                id = 0,
+                id = -1,
                 name = input.username,
                 role = Role.USER,
                 hashedPassword = passwordEncoder.encode(input.password),
@@ -38,20 +38,20 @@ class AuthenticationService(
             )
         )
 
-        return userRepository.findByName(input.username) ?: throw IllegalArgumentException("User not found")
+        return userRepository.findByName(input.username)
+            ?: throw IllegalArgumentException("User not found")
     }
 }
 
-data class User(
+data class AuthenticatedUser(
     val id: UserId,
-    val isBanned: Boolean,
+    val username: String,
     val role: Role,
 )
 
 
 data class UserToCreate(
     val username: String,
-    val email: String,
     val password: String,
 )
 
