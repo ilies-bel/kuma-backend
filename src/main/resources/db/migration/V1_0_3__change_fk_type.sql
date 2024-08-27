@@ -12,3 +12,5 @@ alter table tag_term
 
 alter table tag_term
     alter column tag_id type bigint;
+
+create sequence if not exists tag_term_seq start with 1 increment by 50;
