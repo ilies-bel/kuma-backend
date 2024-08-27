@@ -54,7 +54,7 @@ class TermService(private val termDao: TermDao) {
                     definition = it.defintion,
                     grammaticalCategory = GrammaticalCategory(it.grammaticalCategory.id!!, it.grammaticalCategory.name),
                     voteCount = it.upvotes,
-                    author = People(it.author.id!!, it.author.name),
+                    author = People(it.author.id, it.author.name),
                     language = Language(it.language.id!!, it.language.name, it.language.code),
                     tags = emptyList(),
                     translation = "", // TODO FIXME

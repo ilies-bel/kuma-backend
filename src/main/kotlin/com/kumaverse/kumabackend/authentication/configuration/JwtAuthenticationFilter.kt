@@ -1,5 +1,6 @@
-package com.kumaverse.kumabackend.authentication
+package com.kumaverse.kumabackend.authentication.configuration
 
+import com.kumaverse.kumabackend.authentication.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

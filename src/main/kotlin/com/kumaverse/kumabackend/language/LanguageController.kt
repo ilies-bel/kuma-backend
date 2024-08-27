@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LanguageController(private val languageService: LanguageService) {
 
-    @GetMapping(path = ["/v2/languages", "/api/languages/approved"])
+    @GetMapping("/v2/public/languages")
     fun findApproved(): List<LanguageEntity> {
         return languageService.findApproved()
     }

@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.authentication
+package com.kumaverse.kumabackend.authentication.configuration
 
 import com.kumaverse.kumabackend.user.UserDao
 import org.springframework.context.annotation.Bean
@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
-class ApplicationSecurityConfiguration(private val userDao: UserDao) {
+class AuthenticationConfiguration(private val userDao: UserDao) {
 
     @Bean
     fun userDetailsService(): UserDetailsService {
