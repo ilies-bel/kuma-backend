@@ -14,9 +14,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 @Configuration
@@ -33,7 +30,8 @@ class SecurityConfiguration(
             cors {}
             csrf { disable() }
             authorizeRequests {
-                authorize("/auth/**", permitAll)
+                authorize("/v2/auth/**", permitAll)
+                authorize("/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
@@ -45,24 +43,20 @@ class SecurityConfiguration(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
+        val configuration = CorsConfiguration().apply {
 
-        configuration.allowedOrigins = listOf("http://localhost:3000")
-        configuration.allowedMethods = listOf("GET", "POST", "PATCH")
-        configuration.allowedHeaders = listOf("Authorization", "Content-Type")
+            allowedOrigins = listOf("http://localhost:3000")
+
+            allowedMethods = listOf("GET", "POST", "PATCH", "PUT", "DELETE")
+
+            allowedHeaders = listOf("Authorization", "Content-Type")
+        }
+
 
         val source = UrlBasedCorsConfigurationSource()
 
         source.registerCorsConfiguration("/**", configuration)
 
         return source
-    }
-}
-
-@Configuration
-@EnableWebMvc
-class WebConfig : WebMvcConfigurer {
-    override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/**")
     }
 }

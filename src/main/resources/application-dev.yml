@@ -3,3 +3,9 @@ spring:
     properties:
       hibernate:
         generate_statistics: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

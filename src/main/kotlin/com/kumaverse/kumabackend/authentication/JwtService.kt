@@ -57,6 +57,10 @@ class JwtService(private val securityConfiguration: SecurityConfigProperties) {
             .compact()
     }
 
+    fun getExpirationTime(): Long {
+        return securityConfiguration.expirationTime
+    }
+
     fun isTokenValid(token: String?, userDetails: UserDetails): Boolean {
         val username = extractUsername(token)
         return (username == userDetails.username) && !isTokenExpired(token)
@@ -69,6 +73,7 @@ class JwtService(private val securityConfiguration: SecurityConfigProperties) {
     private fun extractExpiration(token: String?): Date {
         return extractClaim(token, Claims::getExpiration)
     }
+
 
     private fun extractAllClaims(token: String?): Claims {
         return Jwts
