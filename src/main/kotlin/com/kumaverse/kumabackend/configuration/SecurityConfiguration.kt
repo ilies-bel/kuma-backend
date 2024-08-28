@@ -3,6 +3,7 @@ package com.kumaverse.kumabackend.configuration
 import com.kumaverse.kumabackend.authentication.configuration.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -32,6 +33,7 @@ class SecurityConfiguration(
             authorizeRequests {
                 authorize("/v2/auth/**", permitAll)
                 authorize("/v2/public/**", permitAll)
+                authorize(HttpMethod.POST, "/error", permitAll)
                 authorize(anyRequest, authenticated)
             }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }

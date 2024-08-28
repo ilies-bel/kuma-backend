@@ -5,7 +5,6 @@ import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
-import java.util.*
 
 
 @Service
@@ -22,7 +21,7 @@ class LanguageService(private val languageDao: LanguageDao) {
         return languageDao.findAll(approvedLanguages)
     }
 
-    fun findById(id: Long): Optional<LanguageEntity> {
+    fun findById(id: Long): LanguageEntity? {
         return languageDao.findById(id)
     }
 

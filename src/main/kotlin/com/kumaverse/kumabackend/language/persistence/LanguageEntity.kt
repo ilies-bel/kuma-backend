@@ -18,7 +18,7 @@ class LanguageEntity(
 
     var name: String,
 
-    var code: String,
+    var code: String?,
 
     @Enumerated(EnumType.STRING)
     var approvalStatus: ApprovalStatus,

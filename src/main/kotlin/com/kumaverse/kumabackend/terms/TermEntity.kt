@@ -2,9 +2,12 @@ package com.kumaverse.kumabackend.terms
 
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
+import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import com.kumaverse.kumabackend.tag.TagEntity
 import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -42,4 +45,7 @@ class TermEntity(
 
     @ManyToOne
     var grammaticalCategory: CategoryEntity,
+
+    @Enumerated(EnumType.STRING)
+    var approvalStatus: ApprovalStatus,
 )

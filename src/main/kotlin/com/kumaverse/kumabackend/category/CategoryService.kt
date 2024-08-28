@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class CategoryService(private val categoryDao: CategoryDao) {
+class CategoryService(private val categoryJpaDao: CategoryJpaDao) {
     fun findApproved(): List<CategoryEntity> {
         val spec = Specification<CategoryEntity> { root, _, cb ->
             cb.equal(
@@ -15,7 +15,7 @@ class CategoryService(private val categoryDao: CategoryDao) {
             )
         }
 
-        return categoryDao.findAll(spec)
+        return categoryJpaDao.findAll(spec)
     }
 
     fun addCategory() {
