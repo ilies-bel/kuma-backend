@@ -1,6 +1,7 @@
 package com.kumaverse.kumabackend.terms
 
 
+import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.category.CategoryDao
 import com.kumaverse.kumabackend.language.Language
 import com.kumaverse.kumabackend.language.persistence.LanguageDao
@@ -44,6 +45,8 @@ class TermService(
                 tags = tags,
                 upvotes = 0,
                 approvalStatus = ApprovalStatus.PENDING,
+                translation = term.translation,
+                bookmarks = emptyList(),
             )
         ).id!!
     }
@@ -76,14 +79,14 @@ class TermService(
     }
 
 
-    fun findTermsForUser(pageable: Pageable, termSearchRequest: TermSearchRequest): Page<TermForUser> {
-        val searchSpecification = termSearchRequest.toSpecification()
+    @Transactional(readOnly = true)
+    fun findTermsForUser(pageable: Pageable, termSearchRequest: Specification<TermEntity>): Page<TermForUser> {
 
         val pendingSpecification = Specification.where<TermEntity> { root, _, cb ->
             cb.equal(root.get<String>(TermEntity::approvalStatus.name), ApprovalStatus.APPROVED.name)
         }
 
-        return termDao.findAll(searchSpecification.and(pendingSpecification), pageable).map { term ->
+        return termDao.findAll(termSearchRequest.and(pendingSpecification), pageable).map { term ->
             TermForUser(
                 term = Term(
                     id = term.id!!,
@@ -97,9 +100,9 @@ class TermService(
                     author = People(term.author.id, term.author.name),
                     language = Language(term.language.id!!, term.language.name, term.language.code!!),
                     tags = term.tags.map { Tag(it.id, it.name) },
-                    translation = "", // TODO FIXME
+                    translation = term.translation, // TODO FIXME
                 ),
-                userVote = true, // TODO FIXME
+                userVote = null,
                 userHasBookmarked = false,
             )
         }
@@ -107,6 +110,18 @@ class TermService(
 
     fun deleteTerm() {
         TODO()
+    }
+
+    @Transactional(readOnly = true)
+    fun findBookmarkedTerms(pageable: Pageable, id: Long): Page<TermForUser> {
+        val bookmarkedSpecification = Specification.where<TermEntity> { root, _, cb ->
+            cb.equal(
+                root.get<BookmarkEntity>(TermEntity::bookmarks.name).get<Long>(BookmarkEntity::user.name)
+                    .get<Long>(UserEntity::id.name), id
+            )
+        }
+
+        return findTermsForUser(pageable, bookmarkedSpecification)
     }
 
 }
@@ -139,7 +154,7 @@ data class GrammaticalCategory(val id: Long, val name: String)
 
 data class TermForUser(
     val term: Term,
-    val userVote: Boolean,
+    val userVote: Boolean?,
     val userHasBookmarked: Boolean,
 )
 

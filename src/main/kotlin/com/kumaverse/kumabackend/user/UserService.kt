@@ -1,13 +1,12 @@
 package com.kumaverse.kumabackend.user
 
-import com.kumaverse.kumabackend.bookmark.BookmarkDao
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 
 @Service
-class UserService(private val userDao: UserDao, private val bookmarkDao: BookmarkDao) {
+class UserService(private val userDao: UserDao) {
 
     fun getUsers(page: Pageable): Page<UserEntity> {
         return userDao.findAll(page)
