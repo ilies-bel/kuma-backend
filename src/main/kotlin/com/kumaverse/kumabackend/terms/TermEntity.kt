@@ -1,5 +1,6 @@
 package com.kumaverse.kumabackend.terms
 
+import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
@@ -14,6 +15,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
@@ -48,4 +50,9 @@ class TermEntity(
 
     @Enumerated(EnumType.STRING)
     var approvalStatus: ApprovalStatus,
+
+    @OneToMany(mappedBy = "term")
+    val bookmarks: List<BookmarkEntity>,
+
+    val translation: String,
 )

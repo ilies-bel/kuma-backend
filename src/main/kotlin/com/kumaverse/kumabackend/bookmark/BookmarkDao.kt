@@ -1,12 +1,8 @@
 package com.kumaverse.kumabackend.bookmark
 
 import com.kumaverse.kumabackend.user.UserEntity
-import org.springframework.stereotype.Repository
+import org.springframework.data.jpa.repository.JpaRepository
 
-@Repository
-class BookmarkDao {
-
-    fun save(id: Long, termId: Long): UserEntity {
-        TODO()
-    }
+interface BookmarkJpaDao : JpaRepository<BookmarkEntity, Long> {
+    fun findByUser(user: UserEntity): List<BookmarkEntity>
 }

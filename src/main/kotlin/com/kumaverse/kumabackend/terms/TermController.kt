@@ -3,11 +3,13 @@ package com.kumaverse.kumabackend.terms
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.tag.TagEntity
+import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.criteria.JoinType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,9 +29,22 @@ class TermController(private val termService: TermService) {
         @RequestParam language: String?,
         @RequestParam category: String?,
         @RequestParam searchTerm: String?,
+        @RequestParam bookmarked: Boolean?,
+        auth: Authentication,
     ): Page<TermForUser> {
-        return termService.findTermsForUser(pageable, TermSearchRequest(tag, language, category, searchTerm))
+
+        if (bookmarked != null) {
+            val user = auth.principal as UserEntity
+
+            return termService.findBookmarkedTerms(pageable, user.id)
+        }
+
+        return termService.findTermsForUser(
+            pageable,
+            TermSearchRequest(tag, language, category, searchTerm).toSpecification()
+        )
     }
+
 
     @PostMapping("/v2/terms")
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,6 +61,7 @@ data class TermToCreateRequest(
     val theme: String,
     val language: String,
 )
+
 
 data class TermSearchRequest(
     val tag: String?,
@@ -83,7 +99,8 @@ data class TermSearchRequest(
                 cb.like(root.get(TermEntity::name.name), "%$searchTerm%")
             }
 
-            val predicates = listOfNotNull(tagPredicate, languagePredicate, categoryPredicate, searchTermPredicate)
+            val predicates =
+                listOfNotNull(tagPredicate, languagePredicate, categoryPredicate, searchTermPredicate)
 
             cb.and(*predicates.toTypedArray())
         }
