@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -26,10 +28,24 @@ class TermController(private val termService: TermService) {
         @RequestParam category: String?,
         @RequestParam searchTerm: String?,
     ): Page<TermForUser> {
+        return termService.findTermsForUser(pageable, TermSearchRequest(tag, language, category, searchTerm))
+    }
 
-        return termService.findTerms(pageable, TermSearchRequest(tag, language, category, searchTerm))
+    @PostMapping("/v2/terms")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun addTerm(@RequestBody term: TermToCreateRequest): Long {
+        return termService.addTerm(term)
     }
 }
+
+data class TermToCreateRequest(
+    val term: String,
+    val translation: String,
+    val definition: String,
+    val grammaticalCategory: String,
+    val theme: String,
+    val language: String,
+)
 
 data class TermSearchRequest(
     val tag: String?,

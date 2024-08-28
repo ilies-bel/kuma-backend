@@ -33,29 +33,37 @@ class JwtAuthenticationFilter(
         }
 
         try {
-            val jwt = authHeader.substring(7)
-            val userEmail = jwtService.extractUsername(jwt)
+            val jwt = authHeader.extractToken()
+            val username = jwtService.extractUsername(jwt)
 
             val authentication: Authentication? = SecurityContextHolder.getContext().authentication
 
-            if (authentication == null) {
-                val userDetails = userDetailsService.loadUserByUsername(userEmail)
-
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    val authToken = UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.authorities
-                    )
-
-                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                    SecurityContextHolder.getContext().authentication = authToken
-                }
+            if (authentication != null) {
+                filterChain.doFilter(request, response)
+                return
             }
+
+            val userDetails = userDetailsService.loadUserByUsername(username)
+
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                val authToken = UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.authorities
+                )
+
+                authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                SecurityContextHolder.getContext().authentication = authToken
+            }
+
 
             filterChain.doFilter(request, response)
         } catch (exception: Exception) {
             handlerExceptionResolver.resolveException(request, response, null, exception)
         }
+    }
+
+    private fun String.extractToken(): String {
+        return this.substring(7)
     }
 }

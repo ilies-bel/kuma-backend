@@ -1,20 +1,55 @@
 package com.kumaverse.kumabackend.terms
 
 
+import com.kumaverse.kumabackend.category.CategoryDao
 import com.kumaverse.kumabackend.language.Language
+import com.kumaverse.kumabackend.language.persistence.LanguageDao
+import com.kumaverse.kumabackend.moderation.ApprovalStatus
+import com.kumaverse.kumabackend.tag.TagDao
 import com.kumaverse.kumabackend.user.People
+import com.kumaverse.kumabackend.user.UserEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service
-class TermService(private val termDao: TermDao) {
-    fun addTerm() {
-        TODO()
+class TermService(
+    private val termDao: TermDao,
+    private val tagDao: TagDao,
+    private val languageDao: LanguageDao,
+    private val categoryJpaDao: CategoryDao,
+) {
+
+    @Transactional
+    fun addTerm(term: TermToCreateRequest): Long {
+        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+
+        val tags = tagDao.findByNameOrCreate(listOf(term.theme))
+
+        val language = languageDao.findByNameOrCreate(term.language)
+
+        val grammaticalCategory = categoryJpaDao.findByNameOrCreate(term.grammaticalCategory)
+
+        return termDao.save(
+            TermEntity(
+                name = term.term,
+                defintion = term.definition,
+                language = language,
+                author = user,
+                grammaticalCategory = grammaticalCategory,
+                tags = tags,
+                upvotes = 0,
+                approvalStatus = ApprovalStatus.PENDING,
+            )
+        ).id!!
     }
 
 
+    @Transactional
     fun patchTerm(patchTermRequest: PatchTermRequest) {
         patchTermRequest.term?.let {
             // update term
@@ -41,22 +76,27 @@ class TermService(private val termDao: TermDao) {
     }
 
 
-    fun findTerms(pageable: Pageable, termSearchRequest: TermSearchRequest): Page<TermForUser> {
-        // get users data from user service
+    fun findTermsForUser(pageable: Pageable, termSearchRequest: TermSearchRequest): Page<TermForUser> {
+        val searchSpecification = termSearchRequest.toSpecification()
 
-        val specification = termSearchRequest.toSpecification()
+        val pendingSpecification = Specification.where<TermEntity> { root, _, cb ->
+            cb.equal(root.get<String>(TermEntity::approvalStatus.name), ApprovalStatus.APPROVED.name)
+        }
 
-        return termDao.findAll(specification, pageable).map {
+        return termDao.findAll(searchSpecification.and(pendingSpecification), pageable).map { term ->
             TermForUser(
                 term = Term(
-                    id = it.id!!,
-                    term = it.name,
-                    definition = it.defintion,
-                    grammaticalCategory = GrammaticalCategory(it.grammaticalCategory.id!!, it.grammaticalCategory.name),
-                    voteCount = it.upvotes,
-                    author = People(it.author.id, it.author.name),
-                    language = Language(it.language.id!!, it.language.name, it.language.code),
-                    tags = emptyList(),
+                    id = term.id!!,
+                    term = term.name,
+                    definition = term.defintion,
+                    grammaticalCategory = GrammaticalCategory(
+                        term.grammaticalCategory.id!!,
+                        term.grammaticalCategory.name
+                    ),
+                    voteCount = term.upvotes,
+                    author = People(term.author.id, term.author.name),
+                    language = Language(term.language.id!!, term.language.name, term.language.code!!),
+                    tags = term.tags.map { Tag(it.id, it.name) },
                     translation = "", // TODO FIXME
                 ),
                 userVote = true, // TODO FIXME
@@ -70,6 +110,8 @@ class TermService(private val termDao: TermDao) {
     }
 
 }
+
+data class Tag(val id: Long, val name: String)
 
 data class PatchTermRequest(
     val term: String?,
@@ -85,7 +127,7 @@ data class Term(
     val id: Long,
     val term: String,
     val grammaticalCategory: GrammaticalCategory,
-    val tags: List<String>,
+    val tags: List<Tag>,
     val definition: String,
     val translation: String,
     val voteCount: Int,
