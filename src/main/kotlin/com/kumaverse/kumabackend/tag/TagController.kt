@@ -1,5 +1,6 @@
 package com.kumaverse.kumabackend.tag
 
+import com.kumaverse.kumabackend.tag.persistence.TagEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 

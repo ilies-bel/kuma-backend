@@ -2,6 +2,8 @@ package com.kumaverse.kumabackend.tag
 
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
+import com.kumaverse.kumabackend.tag.persistence.TagDao
+import com.kumaverse.kumabackend.tag.persistence.TagEntity
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 

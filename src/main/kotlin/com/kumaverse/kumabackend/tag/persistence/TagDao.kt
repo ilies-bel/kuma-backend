@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.tag
+package com.kumaverse.kumabackend.tag.persistence
 
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import org.springframework.data.jpa.domain.Specification

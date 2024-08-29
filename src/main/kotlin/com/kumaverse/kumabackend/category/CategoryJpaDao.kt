@@ -11,6 +11,7 @@ class CategoryDao(private val categoryJpaDao: CategoryJpaDao) {
     fun findByNameOrCreate(categoryName: String): CategoryEntity {
         return categoryJpaDao.findByName(categoryName.lowercase()) ?: categoryJpaDao.save(
             CategoryEntity(
+                id = -1,
                 name = categoryName,
                 approvalStatus = ApprovalStatus.PENDING
             )
