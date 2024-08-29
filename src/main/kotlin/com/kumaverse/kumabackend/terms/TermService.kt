@@ -2,11 +2,14 @@ package com.kumaverse.kumabackend.terms
 
 
 import com.kumaverse.kumabackend.bookmark.BookmarkEntity
+import com.kumaverse.kumabackend.bookmark.BookmarkJpaDao
 import com.kumaverse.kumabackend.category.CategoryDao
 import com.kumaverse.kumabackend.language.Language
 import com.kumaverse.kumabackend.language.persistence.LanguageDao
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
-import com.kumaverse.kumabackend.tag.TagDao
+import com.kumaverse.kumabackend.tag.persistence.TagDao
+import com.kumaverse.kumabackend.upvotes.VoteDao
+import com.kumaverse.kumabackend.upvotes.VoteEntity
 import com.kumaverse.kumabackend.user.People
 import com.kumaverse.kumabackend.user.UserEntity
 import org.springframework.data.domain.Page
@@ -23,6 +26,8 @@ class TermService(
     private val tagDao: TagDao,
     private val languageDao: LanguageDao,
     private val categoryJpaDao: CategoryDao,
+    private val bookmarkJpaDao: BookmarkJpaDao,
+    private val upvoteDao: VoteDao,
 ) {
 
     @Transactional
@@ -37,6 +42,7 @@ class TermService(
 
         return termDao.save(
             TermEntity(
+                id = -1,
                 name = term.term,
                 defintion = term.definition,
                 language = language,
@@ -82,30 +88,48 @@ class TermService(
     @Transactional(readOnly = true)
     fun findTermsForUser(pageable: Pageable, termSearchRequest: Specification<TermEntity>): Page<TermForUser> {
 
+        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity?
+
+
         val pendingSpecification = Specification.where<TermEntity> { root, _, cb ->
             cb.equal(root.get<String>(TermEntity::approvalStatus.name), ApprovalStatus.APPROVED.name)
         }
 
-        return termDao.findAll(termSearchRequest.and(pendingSpecification), pageable).map { term ->
+
+        val foundTerms = termDao.findAll(termSearchRequest.and(pendingSpecification), pageable)
+
+        var bookmarkedTermIds = emptyList<Long>()
+        var votes = emptyList<VoteEntity>()
+
+        if (user != null) {
+            bookmarkedTermIds =
+                bookmarkJpaDao.findByUserAndIdIn(user, foundTerms.content.map { it.id }).map { it.term.id }
+
+            votes = upvoteDao.findByUserAndIdIn(user, foundTerms.content.map { it.id })
+        }
+
+        return foundTerms.map { term ->
             TermForUser(
                 term = Term(
-                    id = term.id!!,
+                    id = term.id,
                     term = term.name,
                     definition = term.defintion,
                     grammaticalCategory = GrammaticalCategory(
-                        term.grammaticalCategory.id!!,
+                        term.grammaticalCategory.id,
                         term.grammaticalCategory.name
                     ),
                     voteCount = term.upvotes,
                     author = People(term.author.id, term.author.name),
                     language = Language(term.language.id!!, term.language.name, term.language.code!!),
                     tags = term.tags.map { Tag(it.id, it.name) },
-                    translation = term.translation, // TODO FIXME
+                    translation = term.translation,
                 ),
-                userVote = null,
-                userHasBookmarked = false,
+                userVote = votes.firstOrNull { it.term == term }?.isUpvote,
+                userHasBookmarked = bookmarkedTermIds.contains(term.id),
             )
         }
+
+
     }
 
     fun deleteTerm() {

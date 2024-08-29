@@ -1,30 +1,34 @@
-package com.kumaverse.kumabackend.category
+package com.kumaverse.kumabackend.upvotes
 
-import com.kumaverse.kumabackend.moderation.ApprovalStatus
+import com.kumaverse.kumabackend.terms.TermEntity
+import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 
 @Entity
-@Table(name = "grammatical_category")
-class CategoryEntity(
+@Table(name = "vote")
+class VoteEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long,
 
-    var name: String,
+    @ManyToOne
+    var term: TermEntity,
 
-    @Enumerated(EnumType.STRING)
-    var approvalStatus: ApprovalStatus,
+    @ManyToOne
+    var user: UserEntity,
+
+    var isUpvote: Boolean,
 ) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is CategoryEntity) return false
+        if (other !is VoteEntity) return false
 
         if (id != other.id) return false
 
@@ -32,6 +36,6 @@ class CategoryEntity(
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
     }
 }

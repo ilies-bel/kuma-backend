@@ -4,7 +4,7 @@ import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
-import com.kumaverse.kumabackend.tag.TagEntity
+import com.kumaverse.kumabackend.tag.persistence.TagEntity
 import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -23,7 +23,7 @@ import jakarta.persistence.Table
 class TermEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    var id: Long? = null,
+    var id: Long,
 
     var name: String,
 
@@ -55,4 +55,17 @@ class TermEntity(
     val bookmarks: List<BookmarkEntity>,
 
     val translation: String,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TermEntity) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}

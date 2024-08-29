@@ -2,14 +2,14 @@ package com.kumaverse.kumabackend.terms
 
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
-import com.kumaverse.kumabackend.tag.TagEntity
+import com.kumaverse.kumabackend.tag.persistence.TagEntity
 import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.criteria.JoinType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.Authentication
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -30,12 +30,9 @@ class TermController(private val termService: TermService) {
         @RequestParam category: String?,
         @RequestParam searchTerm: String?,
         @RequestParam bookmarked: Boolean?,
-        auth: Authentication,
+        @AuthenticationPrincipal user: UserEntity?,
     ): Page<TermForUser> {
-
-        if (bookmarked != null) {
-            val user = auth.principal as UserEntity
-
+        if (bookmarked != null && user != null) {
             return termService.findBookmarkedTerms(pageable, user.id)
         }
 
