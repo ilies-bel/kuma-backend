@@ -148,6 +148,27 @@ class TermService(
         return findTermsForUser(pageable, bookmarkedSpecification)
     }
 
+    fun addBookmark(termId: Long): Long {
+        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+
+        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+
+        bookmarkJpaDao.save(BookmarkEntity(-1, term, user))
+
+        return termId
+    }
+
+
+    fun removeBookmark(termId: Long): Long {
+        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+
+        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+
+        bookmarkJpaDao.deleteByTermAndUser(term, user)
+
+        return termId
+    }
+
 }
 
 data class Tag(val id: Long, val name: String)
