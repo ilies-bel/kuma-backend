@@ -1,6 +1,7 @@
 package com.kumaverse.kumabackend.terms
 
 
+import com.kumaverse.kumabackend.authentication.AuthenticationService
 import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.bookmark.BookmarkJpaDao
 import com.kumaverse.kumabackend.category.CategoryDao
@@ -88,7 +89,8 @@ class TermService(
     @Transactional(readOnly = true)
     fun findTermsForUser(pageable: Pageable, termSearchRequest: Specification<TermEntity>): Page<TermForUser> {
 
-        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity?
+        val user = AuthenticationService.getUserFromContext()gs
+
 
 
         val pendingSpecification = Specification.where<TermEntity> { root, _, cb ->

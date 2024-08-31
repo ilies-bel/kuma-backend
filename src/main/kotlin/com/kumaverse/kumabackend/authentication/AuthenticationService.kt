@@ -7,6 +7,7 @@ import com.kumaverse.kumabackend.user.UserEntity
 import com.kumaverse.kumabackend.user.UserId
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -40,6 +41,17 @@ class AuthenticationService(
 
         return userRepository.findByName(input.username)
             ?: throw IllegalArgumentException("User not found")
+    }
+
+    companion object {
+        fun getUserFromContext(): UserEntity? {
+            val user = SecurityContextHolder.getContext().authentication.principal
+            if (user == "anonymousUser") {
+                return null
+            }
+
+            return user as UserEntity
+        }
     }
 }
 
