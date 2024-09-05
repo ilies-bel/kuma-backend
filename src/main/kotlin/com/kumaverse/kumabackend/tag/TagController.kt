@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 class TagController(private val tagService: TagService) {
 
 
-    @GetMapping("/v2/tags")
+    @GetMapping("/v2/public/tags")
     fun findApprovedTag(): List<TagEntity> {
         return tagService.findApprovedTags()
     }
