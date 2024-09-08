@@ -1,8 +1,11 @@
-package com.kumaverse.kumabackend.terms
+package com.kumaverse.kumabackend.terms.presentation
 
 import com.kumaverse.kumabackend.category.CategoryEntity
 import com.kumaverse.kumabackend.language.persistence.LanguageEntity
 import com.kumaverse.kumabackend.tag.persistence.TagEntity
+import com.kumaverse.kumabackend.terms.TermEntity
+import com.kumaverse.kumabackend.terms.TermForUser
+import com.kumaverse.kumabackend.terms.TermService
 import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.criteria.JoinType
 import org.springframework.data.domain.Page
@@ -42,6 +45,12 @@ class TermController(private val termService: TermService) {
             pageable,
             TermSearchRequest(tag, language, category, searchTerm).toSpecification()
         )
+    }
+
+
+    @GetMapping("/v2/public/terms/{termId}")
+    fun getTermById(@PathVariable termId: Long): TermForUser {
+        return termService.getTermById(termId)
     }
 
 

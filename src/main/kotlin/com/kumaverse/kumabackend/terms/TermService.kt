@@ -8,7 +8,10 @@ import com.kumaverse.kumabackend.category.CategoryDao
 import com.kumaverse.kumabackend.language.Language
 import com.kumaverse.kumabackend.language.persistence.LanguageDao
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
+import com.kumaverse.kumabackend.tag.Tag
 import com.kumaverse.kumabackend.tag.persistence.TagDao
+import com.kumaverse.kumabackend.terms.presentation.PatchTermRequest
+import com.kumaverse.kumabackend.terms.presentation.TermToCreateRequest
 import com.kumaverse.kumabackend.upvotes.VoteDao
 import com.kumaverse.kumabackend.upvotes.VoteEntity
 import com.kumaverse.kumabackend.user.People
@@ -29,6 +32,7 @@ class TermService(
     private val categoryJpaDao: CategoryDao,
     private val bookmarkJpaDao: BookmarkJpaDao,
     private val upvoteDao: VoteDao,
+    private val mapper: TermMapper,
 ) {
 
     @Transactional
@@ -110,23 +114,10 @@ class TermService(
         }
 
         return foundTerms.map { term ->
-            TermForUser(
-                term = Term(
-                    id = term.id,
-                    term = term.name,
-                    definition = term.defintion,
-                    grammaticalCategory = GrammaticalCategory(
-                        term.grammaticalCategory.id,
-                        term.grammaticalCategory.name
-                    ),
-                    voteCount = term.upvotes,
-                    author = People(term.author.id, term.author.name),
-                    language = Language(term.language.id!!, term.language.name, term.language.code!!),
-                    tags = term.tags.map { Tag(it.id, it.name) },
-                    translation = term.translation,
-                ),
-                userVote = votes.firstOrNull { it.term == term }?.isUpvote,
-                userHasBookmarked = bookmarkedTermIds.contains(term.id),
+            mapper.mapToTermForUser(
+                term,
+                votes.find { it.term.id == term.id },
+                bookmarkedTermIds.contains(term.id)
             )
         }
 
@@ -170,37 +161,44 @@ class TermService(
         return termId
     }
 
+    fun getTermById(termId: Long): TermForUser {
+        val user = AuthenticationService.getUserFromContext()
+
+        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+
+        val userVote = user?.let { upvoteDao.findByUserAndTermId(it, term.id) }
+        val userHasBookmarked = user?.let { bookmarkJpaDao.existsByUserAndTerm(it, term) } ?: false
+
+        return mapper.mapToTermForUser(
+            term,
+            userVote,
+            userHasBookmarked
+        )
+    }
+
 }
 
-data class Tag(val id: Long, val name: String)
 
-data class PatchTermRequest(
-    val term: String?,
-    val definition: String?,
-    val grammaticalCategory: String?,
-    val theme: String?,
-    val upvote: Boolean?,
-    val bookmark: Boolean?,
-)
-
-
-data class Term(
-    val id: Long,
-    val term: String,
-    val grammaticalCategory: GrammaticalCategory,
-    val tags: List<Tag>,
-    val definition: String,
-    val translation: String,
-    val voteCount: Int,
-    val author: People,
-    val language: Language,
-)
-
-data class GrammaticalCategory(val id: Long, val name: String)
-
-data class TermForUser(
-    val term: Term,
-    val userVote: Boolean?,
-    val userHasBookmarked: Boolean,
-)
-
+@Service
+class TermMapper {
+    fun mapToTermForUser(term: TermEntity, userVote: VoteEntity?, hasBookmarked: Boolean?): TermForUser {
+        return TermForUser(
+            term = Term(
+                id = term.id,
+                term = term.name,
+                definition = term.defintion,
+                grammaticalCategory = GrammaticalCategory(
+                    term.grammaticalCategory.id,
+                    term.grammaticalCategory.name
+                ),
+                voteCount = term.upvotes,
+                author = People(term.author.id, term.author.name),
+                language = Language(term.language.id!!, term.language.name, term.language.code!!),
+                tags = term.tags.map { Tag(it.id, it.name) },
+                translation = term.translation,
+            ),
+            userVote = userVote?.isUpvote,
+            userHasBookmarked = hasBookmarked ?: false,
+        )
+    }
+}
