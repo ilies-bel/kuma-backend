@@ -55,7 +55,7 @@ class TermService(
                 translation = term.translation,
                 bookmarks = emptyList(),
             )
-        ).id!!
+        ).id
     }
 
 

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Repository
 @Repository
 class CategoryDao(private val categoryJpaDao: CategoryJpaDao) {
     fun findByNameOrCreate(categoryName: String): CategoryEntity {
+        if (categoryName.isEmpty()) {
+            throw IllegalArgumentException("Category name cannot be empty")
+        }
+
         return categoryJpaDao.findByName(categoryName.lowercase()) ?: categoryJpaDao.save(
             CategoryEntity(
                 id = -1,

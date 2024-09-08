@@ -15,6 +15,11 @@ class LanguageDao(private val languageJpaDao: LanguageJpaDao) {
         languageJpaDao.findAll(spec)
 
     fun findByNameOrCreate(language: String): LanguageEntity {
+        if (language.isEmpty()) {
+            throw IllegalArgumentException("Language cannot be empty")
+        }
+
+
         return languageJpaDao.findByName(language.lowercase()) ?: languageJpaDao.save(
             LanguageEntity(
                 name = language,
