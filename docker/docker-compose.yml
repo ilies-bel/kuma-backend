@@ -1,28 +1,11 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    networks:
-      - db
-    environment:
-      POSTGRES_USER: kuma_admin
-      POSTGRES_PASSWORD: Password1234
-      POSTGRES_DB: kuma
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
   api:
-    build: ..
+    build: .
     restart: unless-stopped
-    ports:
-      - "3001:3001"
     networks:
       - db
     environment:
       - DATABASE_URL=postgresql://postgres:Password1234@kuma:27017
-    depends_on:
-      db:
-        condition: service_healthy
 
 networks:
   db:
