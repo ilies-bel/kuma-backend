@@ -1,0 +1,59 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - github-deployment
+
+env:
+  applicationfolder: kuma-backend
+  AWS_REGION: eu-west-2
+  S3BUCKET: ##s3-bucket##
+
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4.2.0
+        name: Checkout Repository
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4.4.0
+        with:
+          java-version: 21
+
+      - name: chmod
+        run: chmod -R +x ./.github
+
+      - name: Build and Package
+        id: package
+        working-directory: ${{ env.applicationfolder }}
+        run: $GITHUB_WORKSPACE/.github/scripts/build.sh
+
+      - name: Upload Artifact to s3
+        working-directory: ${{ env.applicationfolder }}/target
+        run: aws s3 cp *.war s3://${{ env.S3BUCKET }}/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+          role-session-name: GitHub-Action-Role
+          aws-region: ${{ env.AWS_REGION }}
+      - run: |
+          echo "Deploying branch ${{ env.GITHUB_REF }} to ${{ github.event.inputs.environment }}"
+          commit_hash=`git rev-parse HEAD`
+          aws deploy create-deployment --application-name kumaverseBackend --deployment-group-name Kuma --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures

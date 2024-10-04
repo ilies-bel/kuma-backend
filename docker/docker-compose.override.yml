@@ -1,9 +1,22 @@
 version: "3.9"
 
 services:
-  db:
+  api:
     ports:
-      - "27017:27017"
+      - "3001:3001"
   postgres:
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    image: postgres:16-alpine
+    restart: unless-stopped
+    networks:
+      - db
+    environment:
+      POSTGRES_USER: kuma_admin
+      POSTGRES_PASSWORD: Password1234
+      POSTGRES_DB: kuma
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    depends_on:
+      postgres:
+        condition: service_healthy

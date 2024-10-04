@@ -1,9 +1,16 @@
-FROM node:16
+FROM amazoncorretto:23-jdk as build
 
-WORKDIR /app
+WORKDIR ../
 
-COPY package.json .
-RUN npm install
+COPY . .
 
-COPY .. .
-CMD npm start
+
+RUN gradle build
+
+FROM amzoncoretto:23-alpine
+
+COPY --from=build build/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT exec java app.jar
