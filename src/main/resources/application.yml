@@ -5,15 +5,18 @@ spring:
     name: kuma-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/kuma
-    password: Password1234
+    url: ${DB_URI:jdbc:postgresql://localhost:5432/kuma}
+    password: ${DB_PASSWORD:Password1234}
     username: ${DB_USERNAME:kuma_admin}
+    hikari:
+      schema: kuma
 
   jpa:
     hibernate:
       ddl-auto: validate
   flyway:
     validate-migration-naming: true
+    schemas: kuma
 security:
   jwt:
     expiration-time: 86400000
