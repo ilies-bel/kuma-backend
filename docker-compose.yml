@@ -1,0 +1,13 @@
+services:
+  api:
+    build: docker
+    restart: unless-stopped
+    networks:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:Password1234@kuma:27017
+
+networks:
+  db:
+volumes:
+  db-data:

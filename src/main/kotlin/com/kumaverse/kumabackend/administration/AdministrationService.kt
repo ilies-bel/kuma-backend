@@ -12,7 +12,7 @@ class AdministrationService(private val userDao: UserDao) {
     fun banUser(id: Long): UserId {
         return userDao.getReferenceById(id).apply {
             accountStatus = AccountStatus.BANNED
-        }.let { UserId(it.id!!) }
+        }.let { UserId(it.id) }
     }
 
 
@@ -20,7 +20,7 @@ class AdministrationService(private val userDao: UserDao) {
     fun changeRole(id: Long, role: Role): UserId {
         userDao.getReferenceById(id).apply {
             this.role = role
-        }.let { return UserId(it.id!!) }
+        }.let { return UserId(it.id) }
     }
 }
 

@@ -27,7 +27,7 @@ class TermEntity(
 
     var name: String,
 
-    var defintion: String,
+    var definition: String,
 
     @ManyToOne
     var language: LanguageEntity,

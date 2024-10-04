@@ -26,7 +26,7 @@ class UserEntity(
     var name: String,
 
 
-    @Column(name = "password")
+    @Column(name = "password_hash")
     var hashedPassword: String,
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ class UserEntity(
         return this.name
     }
 
-    override fun getAuthorities(): Collection<out GrantedAuthority> {
+    override fun getAuthorities(): Collection<GrantedAuthority> {
 
         return listOf(GrantedAuthority { role.name })
     }

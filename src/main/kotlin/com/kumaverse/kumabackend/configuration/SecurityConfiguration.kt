@@ -33,6 +33,7 @@ class SecurityConfiguration(
             authorizeRequests {
                 authorize("/v2/auth/**", permitAll)
                 authorize("/v2/public/**", permitAll)
+                authorize("/actuator/**", permitAll)
                 authorize(HttpMethod.POST, "/error", permitAll)
                 authorize(anyRequest, authenticated)
             }
@@ -47,18 +48,26 @@ class SecurityConfiguration(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
 
-            allowedOrigins = listOf("http://localhost:3000")
+            allowedOrigins = listOf("*")
 
-            allowedMethods = listOf("GET", "POST", "PATCH", "PUT", "DELETE")
+            allowedMethods = listOf("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
 
-            allowedHeaders = listOf("Authorization", "Content-Type")
+            allowedHeaders = listOf(
+                "Authorization",
+                "Content-Type",
+                "Origin",
+                "Accept",
+                "X-Requested-With",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
+            )
+
+            maxAge = 3600L
         }
 
 
         val source = UrlBasedCorsConfigurationSource()
-
         source.registerCorsConfiguration("/**", configuration)
-
         return source
     }
 }
