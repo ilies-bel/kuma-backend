@@ -49,7 +49,7 @@ class TermService(
             TermEntity(
                 id = -1,
                 name = term.term,
-                defintion = term.definition,
+                definition = term.definition,
                 language = language,
                 author = user,
                 grammaticalCategory = grammaticalCategory,
@@ -59,7 +59,7 @@ class TermService(
                 translation = term.translation,
                 bookmarks = emptyList(),
             )
-        ).id
+        ).id.toLong()
     }
 
 
@@ -108,7 +108,8 @@ class TermService(
 
         if (user != null) {
             bookmarkedTermIds =
-                bookmarkJpaDao.findByUserAndIdIn(user, foundTerms.content.map { it.id }).map { it.term.id }
+                bookmarkJpaDao.findByUserAndIdIn(user, foundTerms.content.map { it.id })
+                    .map { it.term.id }
 
             votes = upvoteDao.findByUserAndIdIn(user, foundTerms.content.map { it.id })
         }
@@ -117,7 +118,7 @@ class TermService(
             mapper.mapToTermForUser(
                 term,
                 votes.find { it.term.id == term.id },
-                bookmarkedTermIds.contains(term.id)
+                bookmarkedTermIds.contains(term.id.toLong())
             )
         }
 
@@ -166,7 +167,7 @@ class TermService(
 
         val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
 
-        val userVote = user?.let { upvoteDao.findByUserAndTermId(it, term.id) }
+        val userVote = user?.let { upvoteDao.findByUserAndTermId(it, term.id.toLong()) }
         val userHasBookmarked = user?.let { bookmarkJpaDao.existsByUserAndTerm(it, term) } ?: false
 
         return mapper.mapToTermForUser(
@@ -186,7 +187,7 @@ class TermMapper {
             term = Term(
                 id = term.id,
                 term = term.name,
-                definition = term.defintion,
+                definition = term.definition,
                 grammaticalCategory = GrammaticalCategory(
                     term.grammaticalCategory.id,
                     term.grammaticalCategory.name

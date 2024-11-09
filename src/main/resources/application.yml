@@ -1,20 +1,36 @@
 server:
-  port: 3001
+  port: ${SERVER_PORT:3001}
 spring:
   application:
     name: kuma-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/kuma
-    password: Password1234
+    url: ${DB_URI:jdbc:postgresql://localhost:5432/kuma}
+    password: ${DB_PASSWORD:Password1234}
     username: ${DB_USERNAME:kuma_admin}
+
+    hikari:
+      schema: kuma
 
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: kuma
   flyway:
     validate-migration-naming: true
+    schemas: kuma
 security:
   jwt:
     expiration-time: 86400000
     secret-key: ${JWT_SECRET:tiL5CUsiNAa1qkRZ4pt1x5f8gnp3aAp0tiL5CUsiNAa1qkRZ4pt1x5f8gnp3aAp0}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
