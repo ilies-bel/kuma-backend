@@ -9,6 +9,7 @@ import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -23,13 +24,13 @@ import jakarta.persistence.Table
 class TermEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    var id: Long,
+    var id: Long = 0,
 
     var name: String,
 
     var definition: String,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     var language: LanguageEntity,
 
     var upvotes: Int,
@@ -37,10 +38,10 @@ class TermEntity(
     @ManyToMany
     @JoinTable(
         name = "tag_term",
-        joinColumns = [jakarta.persistence.JoinColumn(name = "term_id")],
-        inverseJoinColumns = [jakarta.persistence.JoinColumn(name = "tag_id")]
+        joinColumns = [jakarta.persistence.JoinColumn(name = "term_id", nullable = false)],
+        inverseJoinColumns = [jakarta.persistence.JoinColumn(name = "tag_id", nullable = false)]
     )
-    var tags: List<TagEntity>,
+    val tags: MutableList<TagEntity> = mutableListOf(),
 
     @ManyToOne
     var author: UserEntity,
@@ -56,6 +57,12 @@ class TermEntity(
 
     val translation: String,
 ) {
+
+    fun addTag(tag: TagEntity) {
+        tags.add(tag)
+        tag.terms.add(this)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is TermEntity) return false

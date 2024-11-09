@@ -45,21 +45,24 @@ class TermService(
 
         val grammaticalCategory = categoryJpaDao.findByNameOrCreate(term.grammaticalCategory)
 
-        return termDao.save(
+        val createdTerm = termDao.save(
             TermEntity(
-                id = -1,
                 name = term.term,
                 definition = term.definition,
                 language = language,
                 author = user,
                 grammaticalCategory = grammaticalCategory,
-                tags = tags,
                 upvotes = 0,
                 approvalStatus = ApprovalStatus.PENDING,
                 translation = term.translation,
                 bookmarks = emptyList(),
             )
-        ).id.toLong()
+        )
+        createdTerm.addTag(tags.first())
+
+        termDao.save(createdTerm)
+
+        return createdTerm.id
     }
 
 

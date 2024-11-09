@@ -8,6 +8,7 @@ build/
 deploy.sh
 
 .env
+.env.bak
 
 .gradle/*
 

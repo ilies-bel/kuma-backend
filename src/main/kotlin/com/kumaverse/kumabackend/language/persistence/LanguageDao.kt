@@ -20,7 +20,7 @@ class LanguageDao(private val languageJpaDao: LanguageJpaDao) {
         }
 
 
-        return languageJpaDao.findByName(language.lowercase()) ?: languageJpaDao.save(
+        return languageJpaDao.findByNameIgnoreCase(language) ?: languageJpaDao.save(
             LanguageEntity(
                 name = language,
                 code = null,
@@ -31,6 +31,6 @@ class LanguageDao(private val languageJpaDao: LanguageJpaDao) {
 }
 
 interface LanguageJpaDao : JpaRepository<LanguageEntity, Long>, JpaSpecificationExecutor<LanguageEntity> {
-    fun findByName(name: String): LanguageEntity?
+    fun findByNameIgnoreCase(name: String): LanguageEntity?
 
 }
