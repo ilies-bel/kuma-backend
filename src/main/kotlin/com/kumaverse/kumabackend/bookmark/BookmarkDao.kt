@@ -1,6 +1,6 @@
 package com.kumaverse.kumabackend.bookmark
 
-import com.kumaverse.kumabackend.terms.TermEntity
+import com.kumaverse.kumabackend.terms.persistence.TermEntity
 import com.kumaverse.kumabackend.user.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 

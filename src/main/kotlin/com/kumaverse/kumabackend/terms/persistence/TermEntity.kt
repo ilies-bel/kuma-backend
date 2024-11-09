@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.terms
+package com.kumaverse.kumabackend.terms.persistence
 
 import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.category.CategoryEntity
@@ -33,6 +33,8 @@ class TermEntity(
     var language: LanguageEntity,
 
     var upvotes: Int,
+
+    var downvotes: Int,
 
     @ManyToMany
     @JoinTable(

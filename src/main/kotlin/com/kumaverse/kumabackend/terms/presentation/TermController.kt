@@ -1,16 +1,12 @@
 package com.kumaverse.kumabackend.terms.presentation
 
-import com.kumaverse.kumabackend.category.CategoryEntity
-import com.kumaverse.kumabackend.language.persistence.LanguageEntity
-import com.kumaverse.kumabackend.tag.persistence.TagEntity
-import com.kumaverse.kumabackend.terms.TermEntity
-import com.kumaverse.kumabackend.terms.TermForUser
-import com.kumaverse.kumabackend.terms.TermService
+import com.kumaverse.kumabackend.terms.domain.TermForProfileService
+import com.kumaverse.kumabackend.terms.domain.TermForUser
+import com.kumaverse.kumabackend.terms.domain.TermService
+import com.kumaverse.kumabackend.terms.models.Term
 import com.kumaverse.kumabackend.user.UserEntity
-import jakarta.persistence.criteria.JoinType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -24,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-class TermController(private val termService: TermService) {
+class TermController(private val termService: TermService, private val termForProfileService: TermForProfileService) {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/v2/public/terms")
@@ -47,10 +43,14 @@ class TermController(private val termService: TermService) {
         )
     }
 
-
     @GetMapping("/v2/public/terms/{termId}")
     fun getTermById(@PathVariable termId: Long): TermForUser {
         return termService.getTermById(termId)
+    }
+
+    @GetMapping("/v2/terms/authored")
+    fun getAuthoredTerms(pageable: Pageable): Page<Term> {
+        return termForProfileService.findAuthoredTerms(pageable)
     }
 
 
@@ -70,59 +70,5 @@ class TermController(private val termService: TermService) {
     @DeleteMapping("/v2/terms/{termId}/bookmarks")
     fun deleteBookmark(@PathVariable termId: Long): Long {
         return termService.removeBookmark(termId)
-    }
-}
-
-data class TermToCreateRequest(
-    val term: String,
-    val translation: String,
-    val definition: String,
-    val grammaticalCategory: String,
-    val theme: String,
-    val language: String,
-)
-
-
-data class TermSearchRequest(
-    val tag: String?,
-    val language: String?,
-    val category: String?,
-    val searchTerm: String?,
-) {
-    fun toSpecification(): Specification<TermEntity> {
-
-        return Specification.where { root, _, cb ->
-            // create a  criteria on the tag name
-
-            val tagPredicate = tag?.let {
-                val joinTags =
-                    root.join<TagEntity, TermEntity>(TermEntity::tags.name, JoinType.LEFT)
-
-                cb.equal(joinTags.get<String>(TagEntity::name.name), tag)
-            }
-
-            val languagePredicate = language?.let {
-                val joinLanguage =
-                    root.join<TermEntity, LanguageEntity>(TermEntity::language.name, JoinType.LEFT).get<String>("name")
-
-                cb.equal(joinLanguage, language)
-            }
-
-            val categoryPredicate = category?.let {
-                cb.equal(
-                    root.get<String>(TermEntity::grammaticalCategory.name).get<String>(CategoryEntity::name.name),
-                    category
-                )
-            }
-
-            val searchTermPredicate = searchTerm?.let {
-                cb.like(root.get(TermEntity::name.name), "%$searchTerm%")
-            }
-
-            val predicates =
-                listOfNotNull(tagPredicate, languagePredicate, categoryPredicate, searchTermPredicate)
-
-            cb.and(*predicates.toTypedArray())
-        }
     }
 }

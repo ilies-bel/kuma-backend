@@ -1,6 +1,6 @@
 package com.kumaverse.kumabackend.upvotes
 
-import com.kumaverse.kumabackend.terms.TermEntity
+import com.kumaverse.kumabackend.terms.persistence.TermEntity
 import com.kumaverse.kumabackend.user.UserEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

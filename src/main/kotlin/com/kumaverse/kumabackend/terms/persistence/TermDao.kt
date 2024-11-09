@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.terms
+package com.kumaverse.kumabackend.terms.persistence
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
