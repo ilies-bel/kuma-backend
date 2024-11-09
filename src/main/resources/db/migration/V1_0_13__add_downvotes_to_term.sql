@@ -1,0 +1,2 @@
+ALTER TABLE term
+    ADD COLUMN downvotes INTEGER DEFAULT 0;

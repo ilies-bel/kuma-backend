@@ -1,21 +1,21 @@
-package com.kumaverse.kumabackend.terms
+package com.kumaverse.kumabackend.terms.domain
 
 
 import com.kumaverse.kumabackend.authentication.AuthenticationService
 import com.kumaverse.kumabackend.bookmark.BookmarkEntity
 import com.kumaverse.kumabackend.bookmark.BookmarkJpaDao
 import com.kumaverse.kumabackend.category.CategoryDao
-import com.kumaverse.kumabackend.language.Language
 import com.kumaverse.kumabackend.language.persistence.LanguageDao
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
-import com.kumaverse.kumabackend.tag.Tag
 import com.kumaverse.kumabackend.tag.persistence.TagDao
+import com.kumaverse.kumabackend.terms.persistence.TermDao
+import com.kumaverse.kumabackend.terms.persistence.TermEntity
 import com.kumaverse.kumabackend.terms.presentation.PatchTermRequest
 import com.kumaverse.kumabackend.terms.presentation.TermToCreateRequest
 import com.kumaverse.kumabackend.upvotes.VoteDao
 import com.kumaverse.kumabackend.upvotes.VoteEntity
-import com.kumaverse.kumabackend.user.People
 import com.kumaverse.kumabackend.user.UserEntity
+import com.kumaverse.kumabackend.user.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -33,6 +33,7 @@ class TermService(
     private val bookmarkJpaDao: BookmarkJpaDao,
     private val upvoteDao: VoteDao,
     private val mapper: TermMapper,
+    private val userService: UserService,
 ) {
 
     @Transactional
@@ -58,8 +59,9 @@ class TermService(
                 approvalStatus = ApprovalStatus.PENDING,
                 translation = term.translation,
                 bookmarks = emptyList(),
+                downvotes = 0
             )
-        ).id.toLong()
+        ).id
     }
 
 
@@ -177,29 +179,7 @@ class TermService(
         )
     }
 
+
 }
 
 
-@Service
-class TermMapper {
-    fun mapToTermForUser(term: TermEntity, userVote: VoteEntity?, hasBookmarked: Boolean?): TermForUser {
-        return TermForUser(
-            term = Term(
-                id = term.id,
-                term = term.name,
-                definition = term.definition,
-                grammaticalCategory = GrammaticalCategory(
-                    term.grammaticalCategory.id,
-                    term.grammaticalCategory.name
-                ),
-                voteCount = term.upvotes,
-                author = People(term.author.id, term.author.name),
-                language = Language(term.language.id!!, term.language.name, term.language.code!!),
-                tags = term.tags.map { Tag(it.id, it.name) },
-                translation = term.translation,
-            ),
-            userVote = userVote?.isUpvote,
-            userHasBookmarked = hasBookmarked ?: false,
-        )
-    }
-}
