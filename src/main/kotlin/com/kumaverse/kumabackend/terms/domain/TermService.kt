@@ -8,7 +8,7 @@ import com.kumaverse.kumabackend.category.CategoryDao
 import com.kumaverse.kumabackend.language.persistence.LanguageDao
 import com.kumaverse.kumabackend.moderation.ApprovalStatus
 import com.kumaverse.kumabackend.tag.persistence.TagDao
-import com.kumaverse.kumabackend.terms.persistence.TermDao
+import com.kumaverse.kumabackend.terms.persistence.TermDaoJpa
 import com.kumaverse.kumabackend.terms.persistence.TermEntity
 import com.kumaverse.kumabackend.terms.presentation.PatchTermRequest
 import com.kumaverse.kumabackend.terms.presentation.TermToCreateRequest
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TermService(
-    private val termDao: TermDao,
+    private val termDaoJpa: TermDaoJpa,
     private val tagDao: TagDao,
     private val languageDao: LanguageDao,
     private val categoryJpaDao: CategoryDao,
@@ -46,7 +46,7 @@ class TermService(
 
         val grammaticalCategory = categoryJpaDao.findByNameOrCreate(term.grammaticalCategory)
 
-        return termDao.save(
+        return termDaoJpa.save(
             TermEntity(
                 id = -1,
                 name = term.term,
@@ -103,7 +103,7 @@ class TermService(
         }
 
 
-        val foundTerms = termDao.findAll(termSearchRequest.and(pendingSpecification), pageable)
+        val foundTerms = termDaoJpa.findAll(termSearchRequest.and(pendingSpecification), pageable)
 
         var bookmarkedTermIds = emptyList<Long>()
         var votes = emptyList<VoteEntity>()
@@ -146,7 +146,7 @@ class TermService(
     fun addBookmark(termId: Long): Long {
         val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
 
-        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+        val term = termDaoJpa.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
 
         bookmarkJpaDao.save(BookmarkEntity(-1, term, user))
 
@@ -157,7 +157,7 @@ class TermService(
     fun removeBookmark(termId: Long): Long {
         val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
 
-        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+        val term = termDaoJpa.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
 
         bookmarkJpaDao.deleteByTermAndUser(term, user)
 
@@ -167,7 +167,7 @@ class TermService(
     fun getTermById(termId: Long): TermForUser {
         val user = AuthenticationService.getUserFromContext()
 
-        val term = termDao.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
+        val term = termDaoJpa.findById(termId).orElseThrow { throw IllegalArgumentException("Term not found") }
 
         val userVote = user?.let { upvoteDao.findByUserAndTermId(it, term.id.toLong()) }
         val userHasBookmarked = user?.let { bookmarkJpaDao.existsByUserAndTerm(it, term) } ?: false

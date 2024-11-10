@@ -1,7 +1,7 @@
 package com.kumaverse.kumabackend.terms.domain
 
 import com.kumaverse.kumabackend.terms.models.Term
-import com.kumaverse.kumabackend.terms.persistence.TermDao
+import com.kumaverse.kumabackend.terms.persistence.TermDaoJpa
 import com.kumaverse.kumabackend.terms.persistence.TermEntity
 import com.kumaverse.kumabackend.terms.persistence.toDomain
 import com.kumaverse.kumabackend.user.UserEntity
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class TermForProfileService(
-    private val termDao: TermDao,
+    private val termDaoJpa: TermDaoJpa,
     private val userService: UserService,
 ) {
     fun findAuthoredTerms(pageable: Pageable): Page<Term> {
@@ -23,6 +23,6 @@ class TermForProfileService(
             cb.equal(root.get<UserEntity>(TermEntity::author.name).get<Long>(UserEntity::id.name), user.id)
         }
 
-        return termDao.findAll(authoredSpecification, pageable).map(TermEntity::toDomain)
+        return termDaoJpa.findAll(authoredSpecification, pageable).map(TermEntity::toDomain)
     }
 }
