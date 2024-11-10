@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - github-deployment
+      - pipeline
 
 env:
   AWS_REGION: eu-west-3
@@ -90,6 +90,15 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: false
+
+      - name: Update ECS Service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
+            --force-new-deployment \
+            --deployment-configuration "maximumPercent=200,minimumHealthyPercent=100" \
+            --desired-count 1
 
       - name: Check service stability
         run: |
